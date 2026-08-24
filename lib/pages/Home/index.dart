@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hm_shop/api/home.dart';
 import 'package:hm_shop/components/Home/HmCategory.dart';
 import 'package:hm_shop/components/Home/HmHot.dart';
 import 'package:hm_shop/components/Home/HmMoreList.dart';
@@ -14,14 +15,24 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  // 特惠推荐
+  SpecialRecommendResult _specialRecommendResult = SpecialRecommendResult(
+    id: "",
+    title: "title",
+    subTypes: [],
+  );
 
-  final List<BannerItem> _bannerList = [
-    BannerItem(id: "1",
-        imgUrl: "https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/1.jpg"),
-    BannerItem(id: "2",
-        imgUrl: "https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/2.png"),
-    BannerItem(id: "3",
-        imgUrl: "https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/3.jpg")
+  // 分类使用的图
+  List<CategoryItem> _categoryList = [];
+
+  // 轮播图使用的图
+  List<BannerItem> _bannerList = [
+    //   BannerItem(id: "1",
+    //       imgUrl: "https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/1.jpg"),
+    //   BannerItem(id: "2",
+    //       imgUrl: "https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/2.png"),
+    //   BannerItem(id: "3",
+    //       imgUrl: "https://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/meituan/3.jpg")
   ];
 
   // 获得滚动内容
@@ -29,14 +40,16 @@ class _HomeViewState extends State<HomeView> {
     return [
       // 包裹普通组件的sliver家族组件
       // 轮播图组件
-      SliverToBoxAdapter(child: HmSlider(bannerList: _bannerList,)),
+      SliverToBoxAdapter(child: HmSlider(bannerList: _bannerList)),
       // 间距
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       // 分类组件
-      SliverToBoxAdapter(child: HmCategory()),
+      SliverToBoxAdapter(child: HmCategory(categoryList: _categoryList)),
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       // 推荐组件
-      SliverToBoxAdapter(child: HmSuggestion()),
+      SliverToBoxAdapter(
+        child: HmSuggestion(specialRecommendResult: _specialRecommendResult),
+      ),
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       // 爆款组件
       SliverToBoxAdapter(
@@ -56,6 +69,30 @@ class _HomeViewState extends State<HomeView> {
       // 无限滚动组件
       HmMoreList(),
     ];
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getBannerList();
+    _getCategoryList();
+    _getProductList();
+  }
+
+  void _getBannerList() async {
+    _bannerList = await getBannerListAPI();
+    setState(() {});
+  }
+
+  void _getCategoryList() async {
+    _categoryList = await getCategoryListAPI();
+    setState(() {});
+  }
+
+  void _getProductList() async {
+    _specialRecommendResult = await getProductListAPI();
+    setState(() {});
   }
 
   @override
