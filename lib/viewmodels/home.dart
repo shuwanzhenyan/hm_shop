@@ -152,7 +152,7 @@ class GoodDetailItem extends GoodsItem {
     required super.price,
     required super.picture,
     required super.orderNum,
-    required this.payCount,
+    required this.payCount, // 比GoodsItem多出来的属性
   }) : super(desc: "");
 
   // 转化方法

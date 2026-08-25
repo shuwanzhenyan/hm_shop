@@ -39,6 +39,11 @@ class _HomeViewState extends State<HomeView> {
   // 推荐列表
   List<GoodDetailItem> _recommendList = [];
 
+  // 页码
+  int _page = 1;
+  bool _isLoading = false; // 当前正在加载状态
+  bool _hasMore = true; // 是否还有下一页
+
   // 分类使用的图
   List<CategoryItem> _categoryList = [];
 
@@ -88,7 +93,7 @@ class _HomeViewState extends State<HomeView> {
       ),
       SliverToBoxAdapter(child: SizedBox(height: 10)),
       // 无限滚动组件
-      HmMoreList(),
+      HmMoreList(recommendList: _recommendList),
     ];
   }
 
@@ -100,6 +105,7 @@ class _HomeViewState extends State<HomeView> {
     _getProductList();
     _getInVogueList();
     _getOneStopList();
+    _getRecommendList();
   }
 
   void _getBannerList() async {
@@ -125,6 +131,26 @@ class _HomeViewState extends State<HomeView> {
   // 获取一站式推荐列表
   Future<void> _getOneStopList() async {
     _oneStopResult = await getOneStopListAPI();
+  }
+
+  Future<void> _getRecommendList() async {
+    // 当已经有请求正在加载 或者已经没有下一页了 就放弃请求
+    if (_isLoading || !_hasMore) {
+      return;
+    }
+
+    _isLoading = true; // 占住位置
+    int requestLimit = _page * 8;
+    _recommendList = await getRecommendListAPI({"limit": requestLimit});
+    _isLoading = false; // 松开位置
+    setState(() {});
+    // 我要10条 你给10条 说明我要的你都给了 接着认为还有下一页
+    // 我要10条 你给9条
+    if (_recommendList.length < requestLimit) {
+      _hasMore = false;
+      return;
+    }
+    _page++; // _page +=1;
   }
 
   @override
