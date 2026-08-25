@@ -5,6 +5,7 @@ import 'package:hm_shop/components/Home/HmHot.dart';
 import 'package:hm_shop/components/Home/HmMoreList.dart';
 import 'package:hm_shop/components/Home/HmSlider.dart';
 import 'package:hm_shop/components/Home/HmSuggestion.dart';
+import 'package:hm_shop/utils/ToastUtils.dart';
 import '../../viewmodels/home.dart';
 
 class HomeView extends StatefulWidget {
@@ -100,28 +101,30 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    _getBannerList();
-    _getCategoryList();
-    _getProductList();
-    _getInVogueList();
-    _getOneStopList();
-    _getRecommendList();
+    // _getBannerList();
+    // _getCategoryList();
+    // _getProductList();
+    // _getInVogueList();
+    // _getOneStopList();
+    // _getRecommendList();
     _registerEvent();
+    Future.microtask(() {
+      _paddingTop = 100;
+      setState(() {});
+      _key.currentState?.show();
+    });
   }
 
-  void _getBannerList() async {
+  Future<void> _getBannerList() async {
     _bannerList = await getBannerListAPI();
-    setState(() {});
   }
 
-  void _getCategoryList() async {
+  Future<void> _getCategoryList() async {
     _categoryList = await getCategoryListAPI();
-    setState(() {});
   }
 
-  void _getProductList() async {
+  Future<void> _getProductList() async {
     _specialRecommendResult = await getProductListAPI();
-    setState(() {});
   }
 
   // 获取热榜推荐列表
@@ -166,13 +169,44 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  Future<void> _onRefresh() async {
+    _page = 1;
+    _isLoading = false;
+    _hasMore = true;
+    await _getBannerList();
+    await _getCategoryList();
+    await _getProductList();
+    await _getInVogueList();
+    await _getOneStopList();
+    await _getRecommendList();
+    // 数据获取成功，刷新成功
+    print("刷新数据成功");
+    Toastutils.showToast(context, "刷新成功");
+    _paddingTop = 0;
+    setState(() {});
+  }
+
   final ScrollController _controller = ScrollController();
+
+  // 创建一个key绑定到Widget部件上，操作Widget组件
+  final GlobalKey<RefreshIndicatorState> _key = GlobalKey();
+
+  double _paddingTop = 0;
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: _controller, // 绑定控制器
-      slivers: _getScrollChildren(),
-    ); // 必须是sliver家族的内容
+    return RefreshIndicator(
+      key: _key,
+      onRefresh: _onRefresh,
+      child: AnimatedContainer(
+        padding: EdgeInsets.only(top: _paddingTop),
+        duration: Duration(milliseconds: 300),
+        child: CustomScrollView(
+          // 必须是sliver家族的内容
+          controller: _controller, // 绑定控制器
+          slivers: _getScrollChildren(),
+        ),
+      ),
+    );
   }
 }

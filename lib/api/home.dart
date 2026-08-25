@@ -57,3 +57,4 @@ Future<List<GoodDetailItem>> getRecommendListAPI(
       })
       .toList();
 }
+
