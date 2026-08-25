@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:hm_shop/constants/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
