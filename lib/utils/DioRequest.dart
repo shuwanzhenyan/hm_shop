@@ -29,7 +29,13 @@ class DioRequest {
           handle.reject(DioException(requestOptions: response.requestOptions));
         },
         onError: (error, handle) {
-          handle.reject(error);
+          // handle.reject(error);
+          handle.reject(
+            DioException(
+              requestOptions: error.requestOptions,
+              message: error.response?.data["msg"] ?? "",
+            ),
+          );
         },
       ),
     );
@@ -37,6 +43,11 @@ class DioRequest {
 
   Future<dynamic> get(String url, {Map<String, dynamic>? params}) {
     return _handleRequest(_dio.get(url, queryParameters: params));
+  }
+
+  // 定义Post接口
+  Future<dynamic> post(String url, {Map<String, dynamic>? data}) {
+    return _handleRequest(_dio.post(url, data: data));
   }
 
   // 进一步处理返回结果
@@ -53,9 +64,14 @@ class DioRequest {
       if (data["code"] == GlobalConstants.SUCCESS_CODE) {
         return data["result"];
       }
-      throw Exception(data["msg"]);
+      // throw Exception(data["msg"] ?? "加载数据异常");
+      throw DioException(
+        requestOptions: res.requestOptions,
+        message: data["msg"],
+      );
     } catch (e) {
-      throw Exception(e);
+      // throw Exception(e);
+      rethrow; // 不改变原来抛出的异常类型
     }
   }
 }
