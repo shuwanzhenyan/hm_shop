@@ -14,7 +14,7 @@ class _HmSuggestionState extends State<HmSuggestion> {
   // 只取前3条
   List<GoodsItem> _getDisplayItem() {
     if (widget.specialRecommendResult.subTypes.isEmpty) return [];
-    return widget.specialRecommendResult.subTypes.first.goodsItems.items
+    return widget.specialRecommendResult.subTypes.first.goodsItems.items // 特惠推荐→第一个子项抢先尝鲜→所有商品
         .take(3)
         .toList();
   }

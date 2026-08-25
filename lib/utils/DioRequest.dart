@@ -36,11 +36,11 @@ class DioRequest {
   }
 
   Future<dynamic> get(String url, {Map<String, dynamic>? params}) {
-    return _handleResquest(_dio.get(url, queryParameters: params));
+    return _handleRequest(_dio.get(url, queryParameters: params));
   }
 
   // 进一步处理返回结果
-  Future<dynamic> _handleResquest(Future<Response<dynamic>> task) async {
+  Future<dynamic> _handleRequest(Future<Response<dynamic>> task) async {
     try {
       Response<dynamic> res = await task;
       final data = res.data as Map<String, dynamic>; // res.data才是返回响应真正的数据
