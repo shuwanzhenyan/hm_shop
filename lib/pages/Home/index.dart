@@ -106,6 +106,7 @@ class _HomeViewState extends State<HomeView> {
     _getInVogueList();
     _getOneStopList();
     _getRecommendList();
+    _registerEvent();
   }
 
   void _getBannerList() async {
@@ -153,8 +154,25 @@ class _HomeViewState extends State<HomeView> {
     _page++; // _page +=1;
   }
 
+  // 监听滚动到底部的事件
+  void _registerEvent() {
+    _controller.addListener(() {
+      if (_controller.position.pixels >=
+          (_controller.position.maxScrollExtent - 50)) {
+        // print("到底啦");
+        // 加载下一页数据
+        _getRecommendList();
+      }
+    });
+  }
+
+  final ScrollController _controller = ScrollController();
+
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(slivers: _getScrollChildren()); // 必须是sliver家族的内容
+    return CustomScrollView(
+      controller: _controller, // 绑定控制器
+      slivers: _getScrollChildren(),
+    ); // 必须是sliver家族的内容
   }
 }
