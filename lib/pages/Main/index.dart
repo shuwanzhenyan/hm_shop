@@ -74,7 +74,7 @@ class _MainPageState extends State<MainPage> {
   final UserController _userController = Get.put(UserController());
 
   _initUser() async {
-    await tokenManager.init();
+    await tokenManager.init(); // 初始化token
     if (tokenManager.getToken().isNotEmpty) {
       _userController.updateUserInfo(await getUserInfoAPI());
     }
