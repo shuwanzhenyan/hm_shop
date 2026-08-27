@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
         "account": _phoneController.text,
         "password": _codeController.text,
       });
-      // print(res);
+      // print("登录返回值：${res.id}，${res.account}，${res.token}");
       _userController.updateUserInfo(res);
       tokenManager.setToken(res.token); // 写入持久化数据
       LoadingDialog.hide(context);
